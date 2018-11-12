@@ -164,3 +164,5 @@ C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\Temp\bin\Debug\UnityEngine.
 C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\obj\Debug\Assembly-CSharp.dll
 C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+C:\Users\Ferna\Desktop\EDJD\3º Ano\PAI\WipeOutClone\obj\Debug\Assembly-CSharp.csproj.CopyComplete

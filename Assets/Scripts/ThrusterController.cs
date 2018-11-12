@@ -4,38 +4,36 @@ using UnityEngine;
 
 public class ThrusterController : MonoBehaviour
 {
-    public float strenght, distance;
+    public float strenght, distanceMax;
     public Transform[] thrusters;
 
-    RaycastHit hit;
-    Vector3 downForce;
-    Rigidbody rigidbody;
-    float distancePercent;
+    public Rigidbody rigidbody;
 
-    void start()
-    {
-        rigidbody = this.GetComponent<Rigidbody>();
-    }
 
     void FixedUpdate()
     {
+        RaycastHit hit;
 
         foreach (Transform thruster in thrusters)
         {
-            if(Physics.Raycast(thruster.position, -thruster.up, out hit, distance))
-            {
-                distancePercent = 1 - (hit.distance / distance);
+            Vector3 downForce;
+            float distancePercent;
 
-                downForce = transform.up * strenght * distancePercent;
+            if (Physics.Raycast(thruster.position, -thruster.up, out hit, distanceMax))
+            {
+                distancePercent = 1 - (hit.distance / distanceMax);
+                
+                    downForce = transform.up * strenght * distancePercent;
+                               
 
                 if (rigidbody)
                 {
-                    downForce = downForce * Time.deltaTime * rigidbody.mass;
+                    downForce = downForce * Time.fixedDeltaTime * rigidbody.mass;
 
                     rigidbody.AddForceAtPosition(downForce, thruster.position);
                 }
             }
-        }    
+        }
 
     }
 }
