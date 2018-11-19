@@ -5,7 +5,6 @@ using UnityEngine;
 public class TileSpawn : MonoBehaviour
 {
     public float fallDelay;
-
     // Use this for initialization
     void Start()
     {
@@ -16,7 +15,13 @@ public class TileSpawn : MonoBehaviour
     {
 
     }
-
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            //other.GetComponentInParent<Transform>().forward= Vector3.SlerpUnclamped(other.GetComponentInParent<Transform>().forward, transform.forward, 0.01f); 
+        }
+    }
     void OnTriggerExit(Collider other)
     {
         if (other.tag == "Player")

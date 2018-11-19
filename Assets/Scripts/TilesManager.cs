@@ -10,8 +10,6 @@ public class TilesManager : MonoBehaviour
     public int lados, frenTras, r;
     public float repeatLados, repeatFrenTras;
 
-    private Stack<GameObject>[] recycledTiles;
-
     #region Creating a Singleton(design pattern) to be acessed by all the code once
     private static TilesManager instance;
     public static TilesManager Instance
@@ -29,18 +27,7 @@ public class TilesManager : MonoBehaviour
         }
     }
 
-    public Stack<GameObject>[] RecycledTiles
-    {
-        get
-        {
-            return recycledTiles;
-        }
-
-        set
-        {
-            recycledTiles = value;
-        }
-    }
+    public Stack<GameObject>[] RecycledTiles { get; set; }
     #endregion
 
 
@@ -51,7 +38,7 @@ public class TilesManager : MonoBehaviour
         StackInitiliazer();
         CreatTiles(10);
         r = 0;
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 100; i++)
         {
             TilesMaker();
         }

@@ -9,29 +9,33 @@ public class ThrusterController : MonoBehaviour
 
     public Rigidbody rigidbody;
 
+    Vector3 downForce;
+    public float distancePercent;
 
     void FixedUpdate()
     {
+
         RaycastHit hit;
 
         foreach (Transform thruster in thrusters)
         {
-            Vector3 downForce;
-            float distancePercent;
+            downForce = Vector3.zero;
+            distancePercent = 0;
 
             if (Physics.Raycast(thruster.position, -thruster.up, out hit, distanceMax))
             {
                 distancePercent = 1 - (hit.distance / distanceMax);
-                
-                    downForce = transform.up * strenght * distancePercent;
-                               
+
+                downForce = transform.up * strenght * distancePercent;
 
                 if (rigidbody)
                 {
                     downForce = downForce * Time.fixedDeltaTime * rigidbody.mass;
 
                     rigidbody.AddForceAtPosition(downForce, thruster.position);
+                    Debug.DrawRay(thruster.position, downForce);
                 }
+
             }
         }
 
