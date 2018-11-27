@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/WipeOutPrototype.unity
+- path: Assets/Scenes/MeshEditor.unity
   isLoaded: 1
   isActive: 1

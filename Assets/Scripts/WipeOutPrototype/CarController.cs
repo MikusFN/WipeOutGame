@@ -12,7 +12,7 @@ public class CarController : MonoBehaviour
 
     float rotationVelocity;
     float groundAngVelocity;
-    public Rigidbody rigidbody;
+    public new Rigidbody rigidbody;
     public GameObject track;
 
     // Update is called once per frame
@@ -21,11 +21,11 @@ public class CarController : MonoBehaviour
         Vector3 fowardForce = Vector3.zero;
         if (Physics.Raycast(transform.position, -transform.up, 1f))//Se esta a tres unidades do chao (colocar numa funcao)
         {
-            rigidbody.drag = 1f;// Para calcular a resitencia do ar no objecto que tem o rigidBody (decellarate)
-                               //Turn into a function that computes add force based on input, gets a vector an adds force
+            rigidbody.drag = 1.5f;// Para calcular a resitencia do ar no objecto que tem o rigidBody (decellarate)
+                                  //Turn into a function that computes add force based on input, gets a vector an adds force
             fowardForce = transform.forward * acceleration * Input.GetAxis("Vertical");
             fowardForce = fowardForce * Time.fixedDeltaTime * rigidbody.mass;
-            rigidbody.AddForce(fowardForce);
+            rigidbody.AddForce(fowardForce, ForceMode.Force);
         }
         else
         {
@@ -39,11 +39,11 @@ public class CarController : MonoBehaviour
                 rigidbody.velocity = Vector3.zero;
                 transform.rotation = Quaternion.identity;
                 transform.forward = track.GetComponentInChildren<TilesManager>().currentTile.transform.forward;
-                transform.position = track.GetComponentInChildren<TilesManager>().currentTile.transform.position + Vector3.up * 5;
+                transform.position = track.GetComponentInChildren<TilesManager>().currentTile.transform.position - Vector3.forward + Vector3.up * 5;
             }
         }
 
-        Vector3 turnForce = Vector3.up * rotationRate;
+        Vector3 turnForce = transform.up * rotationRate;
         if (Input.GetAxis("Vertical") >= 0)
             turnForce = turnForce * Input.GetAxis("Horizontal");
         else
@@ -51,7 +51,7 @@ public class CarController : MonoBehaviour
             turnForce = turnForce * -Input.GetAxis("Horizontal");
         }
         turnForce = turnForce * Time.fixedDeltaTime * rigidbody.mass;
-        rigidbody.AddTorque(turnForce);
+        rigidbody.AddTorque(turnForce, ForceMode.Force);
 
         if (Input.GetKey(KeyCode.Space) && GetComponent<ThrusterController>().strenght < 1000)
         {
@@ -60,7 +60,7 @@ public class CarController : MonoBehaviour
             GetComponent<ThrusterController>().distanceMax = 2f;
 
         }
-        else if (GetComponent<ThrusterController>().strenght > 200)
+        else if (GetComponent<ThrusterController>().strenght > 100)
         {
             GetComponent<ThrusterController>().strenght -= 10f;
             GetComponent<ThrusterController>().distanceMax = 1f;
@@ -71,8 +71,6 @@ public class CarController : MonoBehaviour
         newRotation.z = Mathf.SmoothDampAngle(newRotation.z, Input.GetAxis("Horizontal") * -rotationAngle, ref rotationVelocity, smothTime, turnSpeed, Time.fixedDeltaTime);
 
         transform.eulerAngles = newRotation;
-
-        Debug.Log(rigidbody.angularVelocity);
     }
 }
 

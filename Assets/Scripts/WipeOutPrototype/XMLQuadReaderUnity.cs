@@ -35,13 +35,12 @@ public class XMLQuadReaderUnity
         Inicializador(ref quads);
         int i = 0;
         double value = 0;
-        bool done = false;
 
         foreach (XmlNode node in doc.GetElementsByTagName("WiGateWay"))
         {
             foreach (XmlNode item in node.ChildNodes)
             {
-                done = double.TryParse(item.InnerXml, out value);
+                double.TryParse(item.InnerXml, out value);
                 quads[i].Add(value);
                 i++;
             }

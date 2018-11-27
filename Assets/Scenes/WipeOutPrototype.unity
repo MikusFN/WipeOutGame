@@ -284,8 +284,8 @@ Camera:
   m_GameObject: {fileID: 534669902}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.074092224, g: 0.07829746, b: 0.084905684, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -456,6 +456,22 @@ Prefab:
     - target: {fileID: 4362587513078166, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4087214268347442, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4642070994163786, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4216426989985580, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1466472259780920, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12e2c43ba530b4440acbc7dff59cd721, type: 2}
@@ -739,46 +755,46 @@ Prefab:
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
       propertyPath: frenTras
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
-        type: 2}
-      propertyPath: repeatFrenTras
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
-        type: 2}
-      propertyPath: lados
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
+      propertyPath: repeatFrenTras
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
+        type: 2}
+      propertyPath: lados
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
+        type: 2}
       propertyPath: repeatLados
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
       propertyPath: prefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 1272422697035840, guid: 15314990737b685439f7eec4a8b81682,
+      objectReference: {fileID: 1479903986526130, guid: e7bd734d867809c4c9d9fb4a0615a8e6,
         type: 2}
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
       propertyPath: prefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 1351205683662478, guid: b2e30b5ed6135ff4cba951e7a3468018,
+      objectReference: {fileID: 1351205683662478, guid: 5399d53e274d0874b8c1e5ce1cdeeda1,
         type: 2}
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
       propertyPath: prefabs.Array.data[2]
       value: 
-      objectReference: {fileID: 1122791214783148, guid: 99518e1fbf093df45ba1fa8d4a13a156,
+      objectReference: {fileID: 1122791214783148, guid: 11a0161a98108c84fbd13de5ae7cb21e,
         type: 2}
     - target: {fileID: 114026853875699602, guid: 80515295d9cc848488482f9ec3de5a51,
         type: 2}
       propertyPath: prefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 1043237721136320, guid: 1f1952be6ff0a90438a9f57952b525bc,
+      objectReference: {fileID: 1043237721136320, guid: af97726a422e65b49894a90bde68f606,
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80515295d9cc848488482f9ec3de5a51, type: 2}
@@ -941,6 +957,7 @@ GameObject:
   - component: {fileID: 1868223720}
   - component: {fileID: 1868223722}
   - component: {fileID: 1868223716}
+  - component: {fileID: 1868223723}
   m_Layer: 0
   m_Name: HoverCraft
   m_TagString: Player
@@ -948,17 +965,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1868223716
-BoxCollider:
+--- !u!136 &1868223716
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1868223715}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.99999994, y: 1, z: 1}
+  m_Enabled: 0
+  m_Radius: 0.56060344
+  m_Height: 1.353651
+  m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1868223717
 MeshRenderer:
@@ -1009,7 +1027,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1868223715}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -8.76}
+  m_LocalPosition: {x: -8.24, y: 0.5, z: 6.5}
   m_LocalScale: {x: 0.3, y: 0.1, z: 0.5}
   m_Children:
   - {fileID: 1582377447}
@@ -1030,8 +1048,8 @@ Rigidbody:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1868223715}
   serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 2
+  m_Mass: 1000
+  m_Drag: 1.5
   m_AngularDrag: 2
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -1049,7 +1067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4460b7f7bcb4b47aed3dd7fe88b58a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strenght: 100
+  strenght: 0
   distanceMax: 1
   thrusters:
   - {fileID: 642634286}
@@ -1073,13 +1091,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e4bb197ed231d4c9e2c0378868cdc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 1000
-  rotationRate: 10
-  rotationAngle: 25
+  acceleration: 2000
+  rotationRate: 15
+  rotationAngle: 15
   turnSpeed: 1
   smothTime: 1
   rigidbody: {fileID: 1868223720}
   track: {fileID: 731395444}
+--- !u!65 &1868223723
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1868223715}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99999994, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1995013851
 GameObject:
   m_ObjectHideFlags: 0
