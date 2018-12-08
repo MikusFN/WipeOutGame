@@ -9,7 +9,7 @@ using System.IO;
 public class XMLReaderMain : MonoBehaviour
 {
 
-    private string path = "C:\\Sensing Future Technologies\\wigateway.xml";
+    //private string path = "C:\\Sensing Future Technologies\\wigateway.xml";
 
     public void Inicializador(ref List<double>[] quads)
     {
@@ -29,9 +29,9 @@ public class XMLReaderMain : MonoBehaviour
     void Update()
     {
 
-        List<double>[] quads;
+        //List<double>[] quads;
         List<double>[] quadsaux;
-        quads = new List<double>[4];
+        //quads = new List<double>[4];
         quadsaux = new List<double>[4];
         Inicializador(ref quadsaux);
 

@@ -277,10 +277,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05e7005c9d4d4f84e8a53bcb18c7dbe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSizeX: 1
-  gridSizeY: 1
+  gridSizeX: 4
+  gridSizeY: 4
   cellSize: 1
   heightValue: 0.1
+  cubeX: 1
+  cubeY: 1
+  cubeZ: 1
   gridOffSet: {x: 0, y: 0, z: 0}
 --- !u!23 &1009708565
 MeshRenderer:

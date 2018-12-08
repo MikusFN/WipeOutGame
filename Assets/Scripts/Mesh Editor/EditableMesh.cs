@@ -30,8 +30,9 @@ public class EditableMesh : MonoBehaviour
 
     void Start()
     {
-        GenerateVoxelMesh(new VoxelData());
-        //MeshMakeData();
+        MeshMakeData();
+
+        //GenerateVoxelMesh(new VoxelData());
         //MeshStartDataToArray();
     }
 
@@ -63,25 +64,26 @@ public class EditableMesh : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             if(voxelData.GetNeightbor(x, z, dirVoxel) ==0)
-            MakeFace((Direction)i, vertexOffSet, voxelPos);
+            MakeFace((Direction)i, vertexOffSetVoxel, voxelPos);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //MeshMakeData();
-        //MeshStartData();
-        MeshStartDataToArray();
-        MeshUpdateData();
+        MeshMakeData();
+        MeshStartData();
+        
+        //MeshStartDataToArray();
+        //MeshUpdateData();
     }
 
 
     private void MeshMakeData()
     {
         //MakeDicreteGrid();
-        //MakeContinuosGrid();
-        MakeCube();
+        MakeContinuosGrid();
+        //MakeCube();
     }
 
     private void MakeCube()
@@ -183,7 +185,7 @@ public class EditableMesh : MonoBehaviour
                 //else if (j > i)
                 //    yValue = Mathf.Exp(i * 0.1f);
                 //else
-                yValue = Mathf.Exp(j * 0.1f);
+                //yValue = Mathf.Exp(j * 0.1f);
 
                 //Populate the vertices & triangles arrays
                 vertices[l] = new Vector3((i * cellSize) - vertexOffSet, yValue, (j * cellSize) - vertexOffSet);
@@ -201,13 +203,12 @@ public class EditableMesh : MonoBehaviour
                 //Set Triangles Order
                 triangles[m + 0] = l;
                 triangles[m + 1] = triangles[m + 4] = l + 1;
-                triangles[m + 2] = triangles[m + 3] = l + (gridSizeX + 1);
+                triangles[m + 2] = triangles[m + 3] = l + (gridSizeX )+1;
                 triangles[m + 5] = l + (gridSizeY + 1) + 1;
-                l++;
+                l ++; 
                 m += 6;
-
             }
-
+            l++;
         }
         foreach (int item in triangles)
         {

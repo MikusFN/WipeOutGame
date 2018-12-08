@@ -50,7 +50,7 @@ public class LookAtController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.End))
         {
-            Screen.lockCursor = (Screen.lockCursor == false) ? true : false;
+            Cursor.lockState = (Cursor.lockState == CursorLockMode.Confined) ? CursorLockMode.Confined : CursorLockMode.Locked;
         }
         
     }

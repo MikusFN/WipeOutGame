@@ -47,7 +47,7 @@ namespace Assets.GeneralScripts
         //private StreamReader _reader;
 
         //Data Writer
-        private string _writerPath = "Assets/Resources/SessionStats.txt";
+        //private string _writerPath = "Assets/Resources/SessionStats.txt";
         //StreamWriter dataWriter;
         
         EventWaitHandle _waitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, "SHARED_BY_ALL_PROCESSES");
