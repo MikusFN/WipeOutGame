@@ -91,6 +91,9 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.StandardEvents">
+      <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>
