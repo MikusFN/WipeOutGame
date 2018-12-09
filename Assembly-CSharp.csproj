@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Mesh Editor\VerticeController.cs" />
     <Compile Include="Assets\Scripts\Mesh Editor\VoxelData.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\Helper\Bezier.cs" />
+    <Compile Include="Assets\Scripts\Spline Editor\Helper\Points Mode.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\BezierCurve.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\BezierSpline.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\Line.cs" />
@@ -82,6 +83,9 @@
     <Compile Include="Assets\Scripts\WipeOutPrototype\TileSpawn.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\XMLQuadReaderUnity.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\XMLReaderMain.cs" />
+    <Reference Include="UnityEditor.StandardEvents">
+      <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
@@ -90,9 +94,6 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

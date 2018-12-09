@@ -7,17 +7,31 @@ using UnityEngine;
 public class BezierSpline : MonoBehaviour
 {
     #region Fields
-    public Vector3[] points;
-    private int curveCount;
+    [SerializeField]// So unity can save our points
+    private Vector3[] points;
+    [SerializeField]
+    private CONTROLPOINTSMODE[] modes;
 
+    private int curveCount;
     #endregion Fields
 
     #region Properties
     public Vector3[] Points
     { get { return points; } }
-
-    public int CurveCount { get { return (points.Length - 1 )/ 3; } } // Uma curve a cada 3 pontos.
-
+    public int PointsCount { get { return points.Length; } }
+    public Vector3 GetterPoint(int index) { return points[index]; }
+    public void SetPoint(int index, Vector3 pointValue)
+    {
+        points[index] = pointValue;
+        EnforceMode(index);
+    }
+    public int CurveCount { get { return (points.Length - 1) / 3; } } // Uma curve a cada 3 pontos.
+    public CONTROLPOINTSMODE GetControlPointMode(int index) { return modes[(index + 1) / 3]; }
+    public void SetControlPointMode(int index, CONTROLPOINTSMODE mode)
+    {
+        modes[(index + 1) / 3] = mode;
+        EnforceMode(index);
+    }
     #endregion Properties
 
     #region Constructor
@@ -34,6 +48,11 @@ public class BezierSpline : MonoBehaviour
             new Vector3(3,0,0),
             new Vector3(5,0,2)
         };
+        //Apensa precisasmos de modificar os pontos de controlo (primeiro e ultimo)
+        modes = new CONTROLPOINTSMODE[] {
+        CONTROLPOINTSMODE.FREE,
+        CONTROLPOINTSMODE.FREE
+        };
     }
 
     public void AddCurve()
@@ -46,19 +65,29 @@ public class BezierSpline : MonoBehaviour
         for (int i = 3; i > 0; i--)
         {
             // Avança o ultimo ponto
-            lastPoint.x = lastPoint.x + 1;
+            lastPoint.x = lastPoint.x + 5;
+
+            if (i % 2 == 0)
+                lastPoint.z = lastPoint.z + 5;
+            else
+                lastPoint.z = 0;
+
             //Coloca o novo ponto no array
             points[points.Length - i] = lastPoint;
         }
+        //Colocar um  novo modo para o novo ponto de controlo
+        Array.Resize(ref modes, modes.Length + 1);
+        //O tipo de ponto tem que ser igual ao ultimo para manter a derivada.
+        modes[modes.Length - 1] = modes[modes.Length - 2];
     }
 
     //Funçao que permite obter o ponto na curva entre o primeiro
     //e o ultimo elementos do array de pontos de acordo com um valor t
     //Com o elemento intermedio a "puxar" a curva para si
-    public Vector3 GetPoint(float t)
+    public Vector3 GetPointInSpline(float t)
     {
         //Indexador de pontos na curva
-        int i=-1;
+        int i = -1;
 
         //Valor maximo da curva (Quando o valor de f é superior a 1)
         if (t >= 1f)
@@ -82,7 +111,7 @@ public class BezierSpline : MonoBehaviour
         return transform.TransformPoint(Bezier.GetPoint(points[i], points[i + 1], points[i + 2], points[i + 3], t));
     }
 
-    public Vector3 GetPointCubic(float t)
+    public Vector3 GetPointCubicInCurve(float t)
     {
         return transform.TransformPoint(Bezier.GetPoint(points[0], points[1], points[2], points[3], t));
     }
@@ -128,6 +157,43 @@ public class BezierSpline : MonoBehaviour
     public Vector3 GetDirectionCubic(float t)
     {
         return GetVelocityCubic(t).normalized;
+    }
+    //Aplica o mode correspondente ao index que recebe
+    private void EnforceMode(int index)
+    {
+        int modeIndex = (index + 1) / 3;
+
+        CONTROLPOINTSMODE mode = modes[modeIndex];
+        //Verifica quando nao deve aplicar o novo mode (Free, no inicio ou fim da curva)
+        if (mode == CONTROLPOINTSMODE.FREE || modeIndex == 0 || modeIndex == modes.Length - 1)
+        { return; }
+
+        /*Now which point should we adjust? When we change a point's mode, it is either a point in
+          between curves or one of its neighbors. When we have the middle point selected, we can just
+          keep the previous point fixed and enforce the constraints on the point on the opposite side. If we
+          have one of the other points selected, we should keep that one fixed and adjust its opposite. That
+          way our selected point always stays where it is. So let's define the indices for these points.*/
+
+        int middleIndex = modeIndex * 3;
+        int fixedIndex, enforcedIndex;
+        //index selector
+        if (index <= middleIndex)
+        {
+            fixedIndex = middleIndex - 1;
+            enforcedIndex = middleIndex + 1;
+        }
+        else
+        {
+            fixedIndex = middleIndex + 1;
+            enforcedIndex = middleIndex - 1;
+        }
+        Vector3 middle = points[middleIndex];
+        Vector3 enforcedTangent = middle - points[fixedIndex];
+        if (mode == CONTROLPOINTSMODE.ALIGN)
+        {
+            enforcedTangent = enforcedTangent.normalized * Vector3.Distance(middle, points[enforcedIndex]);
+        }
+        points[enforcedIndex] = middle + enforcedTangent;
     }
     #endregion Methods
 }

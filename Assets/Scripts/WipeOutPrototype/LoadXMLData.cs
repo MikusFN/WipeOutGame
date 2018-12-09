@@ -155,7 +155,7 @@ namespace Assets.GeneralScripts
                 tras = (_td + _te);
 
                 amp = Mathf.Sqrt(Mathf.Pow(direita - esquerda, 2) + Mathf.Pow(frente - tras, 2));
-                Debug.Log("amp: " + amp);
+                //Debug.Log("amp: " + amp);
                 x = pesoValor * x + (1 - pesoValor) * (direita - esquerda);
                 y = pesoValor * y + (1 - pesoValor) * (frente - tras);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -20,6 +21,12 @@ public class SplineInspector : Editor
     private const float pickSize = .06f;
     //Para nao colocar nenhum handle selected by default
     private int selectedIndex = -1;
+
+    private static Color[] modeColors = {
+     Color.white,
+     Color.yellow,
+     Color.cyan
+     };
     #endregion Fields
 
     #region Properties
@@ -34,16 +41,22 @@ public class SplineInspector : Editor
 
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
-        spline = target as BezierSpline;
+        //Para ter um formato normal no inspector
+        //DrawDefaultInspector();
 
-        if (GUILayout.Button("Add Curve"))
+        spline = target as BezierSpline;//Para que objecto vai ser costume
+
+        if (selectedIndex >= 0 && selectedIndex < spline.PointsCount)
+            DrawSelectedPointInspector();
+
+        if (GUILayout.Button("Add Curve"))//se butao no inspector  for pressionado chama o metodo para adicionar uma curva
         {
             Undo.RecordObject(spline, "Add curve");
             spline.AddCurve();
-            EditorUtility.SetDirty(spline);
+            EditorUtility.SetDirty(spline);//Helps in the undo process
         }
     }
+
 
     private void OnSceneGUI()
     {
@@ -56,7 +69,7 @@ public class SplineInspector : Editor
         //Verificar se houve modificações nos handle,
         //Caso haja atribui ao ponto em world space e por fim passa novamente para local space
         //Assim temos uma posiçao modificada de um ponto.
-        //for (int j = 0; j < spline.points.Length-1; j+=3)
+        //for (int j = 0; j < spline.PointsCount-1; j+=3)
         //{
         //    Vector3 p0 = ShowPoint(j+0);
         //    Vector3 p1 = ShowPoint(j+1);
@@ -69,7 +82,7 @@ public class SplineInspector : Editor
         //    //Handles.DrawLine(p1, p2);
         //    Handles.DrawLine(p2, p3);
 
-        //    Vector3 lineStart = spline.GetPointCubic(j);
+        //    Vector3 lineStart = spline.GetPointInSplineCubic(j);
         //    Handles.color = Color.green;
         //    Handles.DrawLine(lineStart, lineStart + spline.GetDirection(j));
 
@@ -77,7 +90,7 @@ public class SplineInspector : Editor
         //    for (int i = 1; i <= curveSteps; i++)
         //    {
         //        // Ponto na curva a cada step da linha
-        //        Vector3 lineEnd = spline.GetPointCubic(i / (float)curveSteps);
+        //        Vector3 lineEnd = spline.GetPointInSplineCubic(i / (float)curveSteps);
         //        Handles.color = Color.white;
         //        Handles.DrawLine(lineStart, lineEnd);
         //        //Handles.color = Color.green;
@@ -91,7 +104,7 @@ public class SplineInspector : Editor
         #endregion
         //Ponto inicial
         Vector3 p0 = ShowPoint(0);
-        for (int i = 1; i < spline.points.Length; i += 3)//Go through all the splines (a cada 3 pontos)
+        for (int i = 1; i < spline.PointsCount; i += 3)//Go through all the splines (a cada 3 pontos)
         {
             //Tres pontos que fazem uma spline
             Vector3 p1 = ShowPoint(i);
@@ -112,16 +125,49 @@ public class SplineInspector : Editor
         ShowDirections();
     }
 
+
+    private void DrawSelectedPointInspector()
+    {
+        //Label no Gui
+        GUILayout.Label("Selected Point");
+        //Waiting for a change
+        EditorGUI.BeginChangeCheck();
+        //Ir buscar a posição do ponto selecionado
+        Vector3 point = EditorGUILayout.Vector3Field("Position", spline.GetterPoint(selectedIndex));
+
+        if (EditorGUI.EndChangeCheck())// Quando o listener termina 
+        {
+            Undo.RecordObject(spline, "Move Point");
+            EditorUtility.SetDirty(spline);
+            //Definir o ponto com a nova modificaço
+            spline.SetPoint(selectedIndex, point);
+        }
+        //Permite a modificação do modo do ponto
+        EditorGUI.BeginChangeCheck();
+        CONTROLPOINTSMODE mode = (CONTROLPOINTSMODE)EditorGUILayout.EnumPopup("Mode", spline.GetControlPointMode(selectedIndex));
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(spline, "Change Point Mode");
+            spline.SetControlPointMode(selectedIndex, mode);
+            EditorUtility.SetDirty(spline);
+        }
+    }
+
     private Vector3 ShowPoint(int index)
     {
         //Transforma um ponto de local para world
-        Vector3 point = handlePosition.TransformPoint(spline.Points[index]);
+        Vector3 point = handlePosition.TransformPoint(spline.GetterPoint(index));
         //Para obter sempre o mesmo tamanho para as handles (independente do tamanho d ecra)
         float size = HandleUtility.GetHandleSize(point);
+        //Modifica a cor do handle de acordo com o modo do control point selecionado
+        Handles.color = modeColors[(int)spline.GetControlPointMode(index)];
         //Verifica primeiro qual é o butão selecionado
         if (Handles.Button(point, handleRotation, handleSize * size, pickSize * size, Handles.DotCap))
         {
+            //o indice 
             selectedIndex = index;
+            //Sempre que exite um botao selecionado pedimos um repaint do inspector
+            Repaint();
         }
         //So pode ser alturado o que esta actualmente selecionado
         if (selectedIndex == index)
@@ -134,7 +180,7 @@ public class SplineInspector : Editor
                 Undo.RecordObject(spline, "Move Point");
                 EditorUtility.SetDirty(spline);
                 //Modifica o ponto no seu local space
-                spline.Points[index] = handlePosition.InverseTransformPoint(point);
+                spline.SetPoint(index, handlePosition.InverseTransformPoint(point));
             }
         }
         return point;
@@ -144,14 +190,14 @@ public class SplineInspector : Editor
     private void ShowDirections()
     {
         Handles.color = Color.green;
-        Vector3 point = spline.GetPoint(0f);
+        Vector3 point = spline.GetPointInSpline(0f);
         //Velocidade non primeiro ponto da spline
         Handles.DrawLine(point, point + spline.GetDirectionCubic(0f) * directionScale);
         //O numero de linhas de velocidade a cada curva
         int steps = curveSteps * 10 * spline.CurveCount;
         for (int i = 1; i < steps; i++)
         {
-            point = spline.GetPoint(i / (float)steps);
+            point = spline.GetPointInSpline(i / (float)steps);
             //Direcções que parte do ponto que acaba a linha + a primeira derivada que da a velocidade a cada ponto
             Handles.DrawLine(point, point + spline.GetDirectionCubic(i / (float)steps) * directionScale);
         }
