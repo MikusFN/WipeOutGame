@@ -134,7 +134,7 @@ public class SplineInspector : Editor
         EditorGUI.BeginChangeCheck();
         //Ir buscar a posição do ponto selecionado
         Vector3 point = EditorGUILayout.Vector3Field("Position", spline.GetterPoint(selectedIndex));
-
+        Debug.Log(selectedIndex);
         if (EditorGUI.EndChangeCheck())// Quando o listener termina 
         {
             Undo.RecordObject(spline, "Move Point");
@@ -144,6 +144,7 @@ public class SplineInspector : Editor
         }
         //Permite a modificação do modo do ponto
         EditorGUI.BeginChangeCheck();
+        //Valor do modo selecionado no Layout
         CONTROLPOINTSMODE mode = (CONTROLPOINTSMODE)EditorGUILayout.EnumPopup("Mode", spline.GetControlPointMode(selectedIndex));
         if (EditorGUI.EndChangeCheck())
         {

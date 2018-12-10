@@ -22,6 +22,7 @@ public class BezierSpline : MonoBehaviour
     public Vector3 GetterPoint(int index) { return points[index]; }
     public void SetPoint(int index, Vector3 pointValue)
     {
+        MovePointsAlong( index, pointValue);
         points[index] = pointValue;
         EnforceMode(index);
     }
@@ -29,6 +30,8 @@ public class BezierSpline : MonoBehaviour
     public CONTROLPOINTSMODE GetControlPointMode(int index) { return modes[(index + 1) / 3]; }
     public void SetControlPointMode(int index, CONTROLPOINTSMODE mode)
     {
+        //Uma spline com 7 pontos (0, 1, 2, 3, 4, 5, 6) tem uma sequencia de modos como esta (0, 0, 1, 1, 1, 2, 2)
+        //Pontos das bounds partilham o mesmo modo e os tres do centro tambem o têm o mesmo modo
         modes[(index + 1) / 3] = mode;
         EnforceMode(index);
     }
@@ -75,10 +78,12 @@ public class BezierSpline : MonoBehaviour
             //Coloca o novo ponto no array
             points[points.Length - i] = lastPoint;
         }
-        //Colocar um  novo modo para o novo ponto de controlo
+        //Colocar um  novo modo para o novo ponto de controlo só precisa de um novo modo porque cada nova curva so pode ter um modo diferente os ultimo dois pontos
         Array.Resize(ref modes, modes.Length + 1);
-        //O tipo de ponto tem que ser igual ao ultimo para manter a derivada.
+        //Os dois novos pontos( sem ser o reutilizado para ligar à anterior) é que podem ter um modo diferente mas partilhado entre os dois ultimos
         modes[modes.Length - 1] = modes[modes.Length - 2];
+        //Aplicar o mode do ultimo ponto da curva, antes desta nova ser adicionada, aos novos pontos.
+        EnforceMode(modes.Length - 4);
     }
 
     //Funçao que permite obter o ponto na curva entre o primeiro
@@ -158,6 +163,7 @@ public class BezierSpline : MonoBehaviour
     {
         return GetVelocityCubic(t).normalized;
     }
+
     //Aplica o mode correspondente ao index que recebe
     private void EnforceMode(int index)
     {
@@ -168,32 +174,58 @@ public class BezierSpline : MonoBehaviour
         if (mode == CONTROLPOINTSMODE.FREE || modeIndex == 0 || modeIndex == modes.Length - 1)
         { return; }
 
-        /*Now which point should we adjust? When we change a point's mode, it is either a point in
-          between curves or one of its neighbors. When we have the middle point selected, we can just
-          keep the previous point fixed and enforce the constraints on the point on the opposite side. If we
-          have one of the other points selected, we should keep that one fixed and adjust its opposite. That
-          way our selected point always stays where it is. So let's define the indices for these points.*/
+        // Seletor de indices onde o que escolhemos fica sempre fixo 
 
+        // Os Pontos sao definidos a cada 3
         int middleIndex = modeIndex * 3;
         int fixedIndex, enforcedIndex;
-        //index selector
+
+        //index selector em que se for inferior 
+        //ao ponto medio de uma curva entra neste bloco
         if (index <= middleIndex)
         {
+            // O ponto anterior fica marcado como fixo
             fixedIndex = middleIndex - 1;
+            // E força o ponto a seguir 
             enforcedIndex = middleIndex + 1;
         }
-        else
+        else // Caso o ponto esteja à frente
         {
+            // O ponto fixo é o proximo 
             fixedIndex = middleIndex + 1;
+            // E força-se o anterior
             enforcedIndex = middleIndex - 1;
         }
+        // Vamos buscar o ponto medio
         Vector3 middle = points[middleIndex];
+        
+        // Calculamos o vector entre o fixo e o escolhido
         Vector3 enforcedTangent = middle - points[fixedIndex];
         if (mode == CONTROLPOINTSMODE.ALIGN)
         {
+            //No caso de align aplicamos o valor do vector mas com a distancia que ja tinha
             enforcedTangent = enforcedTangent.normalized * Vector3.Distance(middle, points[enforcedIndex]);
         }
+        //No caso de ser um reflexo aplca-se o mesmo valor do ponto medio ao ponto vizinho nao escolhido
         points[enforcedIndex] = middle + enforcedTangent;
     }
+    
+    //Move o pontos visinhos com o medio
+    private void MovePointsAlong(int index,  Vector3 pointValue)
+    {
+        if (index % 3 == 0) //Se for um ponto na curva e nao de controlo
+        {
+            Vector3 delta = pointValue - points[index]; //Guarda-se o valor de movimento
+            if (index > 0) // Caso seja superior a zero move o que esta a seguir
+            {
+                points[index - 1] += delta;
+            }
+            if (index + 1 < points.Length) // Caso seja inferioe ao maximo move o que esta a antes
+            {
+                points[index + 1] += delta;
+            }
+        }
+    }
+
     #endregion Methods
 }
