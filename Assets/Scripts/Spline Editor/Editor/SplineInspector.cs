@@ -14,7 +14,8 @@ public class SplineInspector : Editor
 
     //Constantes que definem as linhas em cada curva e o tamanho das linhas de velocidade
     private const int curveSteps = 10;
-    private const float directionScale = 2f;
+    private const int lineNumberAdd = 10;
+    private const float directionScale = 0.5f;
 
     //Constantes que definem o tamanho do butao de handle
     private const float handleSize = 0.04f;
@@ -45,7 +46,15 @@ public class SplineInspector : Editor
         //DrawDefaultInspector();
 
         spline = target as BezierSpline;//Para que objecto vai ser costume
-
+        EditorGUI.BeginChangeCheck();        //Novo value que vem do GUI
+        bool inLoop = EditorGUILayout.Toggle("Loop", spline.InLoop);
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(spline, "Toggle Loop");
+            EditorUtility.SetDirty(spline);
+            //Atribui o novo loop à spline
+            spline.InLoop = inLoop;
+        }
         if (selectedIndex >= 0 && selectedIndex < spline.PointsCount)
             DrawSelectedPointInspector();
 
@@ -160,6 +169,8 @@ public class SplineInspector : Editor
         Vector3 point = handlePosition.TransformPoint(spline.GetterPoint(index));
         //Para obter sempre o mesmo tamanho para as handles (independente do tamanho d ecra)
         float size = HandleUtility.GetHandleSize(point);
+        //Caso o ponto seja o inicial o tamanho será o dobro para puder vizualizar o inicio da spline
+        if (index == 0) { size *= 1.5f; }
         //Modifica a cor do handle de acordo com o modo do control point selecionado
         Handles.color = modeColors[(int)spline.GetControlPointMode(index)];
         //Verifica primeiro qual é o butão selecionado
@@ -193,14 +204,14 @@ public class SplineInspector : Editor
         Handles.color = Color.green;
         Vector3 point = spline.GetPointInSpline(0f);
         //Velocidade non primeiro ponto da spline
-        Handles.DrawLine(point, point + spline.GetDirectionCubic(0f) * directionScale);
+        //Handles.DrawLine(point, point + spline.GetDirectionCubic(0f) * directionScale);
         //O numero de linhas de velocidade a cada curva
-        int steps = curveSteps * 10 * spline.CurveCount;
+        int steps = curveSteps * lineNumberAdd * spline.CurveCount;
         for (int i = 1; i < steps; i++)
         {
             point = spline.GetPointInSpline(i / (float)steps);
             //Direcções que parte do ponto que acaba a linha + a primeira derivada que da a velocidade a cada ponto
-            Handles.DrawLine(point, point + spline.GetDirectionCubic(i / (float)steps) * directionScale);
+            Handles.DrawLine(point, point + spline.GetVelocity(i / (float)steps) * directionScale);
         }
     }
     #endregion Methods

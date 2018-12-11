@@ -40,7 +40,7 @@ namespace Assets.GeneralScripts
         //private static string PATH = "C:/Users/tayna/Desktop/wigateway.xml";
 
         private float direita, esquerda, frente, tras, x = 0.0f, y = 0.0f;
-        private float _fe, _fd, _te, _td, _weight, amp;
+        public float _fe, _fd, _te, _td, _weight, amp;
         private Vector2 _virtualDirection = Vector2.zero;
                 
         private XmlDocument _xmlDoc;

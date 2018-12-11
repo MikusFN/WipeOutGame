@@ -11,10 +11,17 @@ public class LookAtController : MonoBehaviour
 
     private float rotationX = 0.0f;
     private float rotationY = 0.0f;
+    private bool isLocked;
+    public Transform target;
+    private Vector3 lastPosition;
+
+    public int backSpace = -1;
+    public float height=1;
 
     void Start()
     {
         //Screen.lockCursor = true;
+        isLocked = false;
     }
 
     void Update()
@@ -52,7 +59,15 @@ public class LookAtController : MonoBehaviour
         {
             Cursor.lockState = (Cursor.lockState == CursorLockMode.Confined) ? CursorLockMode.Confined : CursorLockMode.Locked;
         }
-        
+        if (Input.GetKeyDown(KeyCode.L))
+            isLocked = !isLocked;
+
+        if (isLocked && target)
+        {
+            transform.position = Vector3.Lerp(target.position, lastPosition, 0.50f) ;
+            transform.LookAt(target);
+        }
+        lastPosition = transform.position;
     }
 }
 

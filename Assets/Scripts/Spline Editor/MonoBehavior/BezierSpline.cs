@@ -11,7 +11,8 @@ public class BezierSpline : MonoBehaviour
     private Vector3[] points;
     [SerializeField]
     private CONTROLPOINTSMODE[] modes;
-
+    [SerializeField]
+    private bool inLoop;
     private int curveCount;
     #endregion Fields
 
@@ -22,19 +23,49 @@ public class BezierSpline : MonoBehaviour
     public Vector3 GetterPoint(int index) { return points[index]; }
     public void SetPoint(int index, Vector3 pointValue)
     {
-        MovePointsAlong( index, pointValue);
+        MovePointsAlong(index, pointValue);
         points[index] = pointValue;
         EnforceMode(index);
     }
     public int CurveCount { get { return (points.Length - 1) / 3; } } // Uma curve a cada 3 pontos.
+    public bool InLoop
+    {
+        get { return inLoop; }
+        set
+        {
+            inLoop = value;
+            if (value == true)
+            {
+                // No caso de estar em loop 
+                //então o ultimo ponto fica com o mode do primeiro 
+                modes[modes.Length - 1] = modes[0];
+                //e a sua posição tambem será a mesma.
+                SetPoint(0, points[0]);
+            }
+        }
+    }
     public CONTROLPOINTSMODE GetControlPointMode(int index) { return modes[(index + 1) / 3]; }
     public void SetControlPointMode(int index, CONTROLPOINTSMODE mode)
     {
         //Uma spline com 7 pontos (0, 1, 2, 3, 4, 5, 6) tem uma sequencia de modos como esta (0, 0, 1, 1, 1, 2, 2)
         //Pontos das bounds partilham o mesmo modo e os tres do centro tambem o têm o mesmo modo
         modes[(index + 1) / 3] = mode;
+        int modeIndex = (index + 1) / 3;
+        if (inLoop)
+        {
+            //No caso de estar em loop entao os modes sao iguais no inicio e fim sendo que se for no inicio aplica-se no fim e vice versa
+            if (modeIndex == 0)
+            {
+                modes[modes.Length - 1] = mode;
+            }
+            else if (modeIndex == modes.Length - 1)
+            {
+                modes[0] = mode;
+            }
+        }
         EnforceMode(index);
     }
+
     #endregion Properties
 
     #region Constructor
@@ -70,13 +101,14 @@ public class BezierSpline : MonoBehaviour
             // Avança o ultimo ponto
             lastPoint.x = lastPoint.x + 5;
 
-            if (i % 2 == 0)
-                lastPoint.z = lastPoint.z + 5;
-            else
-                lastPoint.z = 0;
+            //if (i % 2 == 0)
+            //    lastPoint.z = lastPoint.z + 5;
+            //else
+            //    lastPoint.z = 0;
 
             //Coloca o novo ponto no array
             points[points.Length - i] = lastPoint;
+
         }
         //Colocar um  novo modo para o novo ponto de controlo só precisa de um novo modo porque cada nova curva so pode ter um modo diferente os ultimo dois pontos
         Array.Resize(ref modes, modes.Length + 1);
@@ -84,6 +116,14 @@ public class BezierSpline : MonoBehaviour
         modes[modes.Length - 1] = modes[modes.Length - 2];
         //Aplicar o mode do ultimo ponto da curva, antes desta nova ser adicionada, aos novos pontos.
         EnforceMode(modes.Length - 4);
+
+        //Quando em loop o ultimo ponto passa a ser como o primeiro, tanto na localização como no mode
+        if (inLoop)
+        {
+            points[points.Length - 1] = points[0];
+            modes[modes.Length - 1] = modes[0];
+            EnforceMode(0);
+        }
     }
 
     //Funçao que permite obter o ponto na curva entre o primeiro
@@ -170,8 +210,8 @@ public class BezierSpline : MonoBehaviour
         int modeIndex = (index + 1) / 3;
 
         CONTROLPOINTSMODE mode = modes[modeIndex];
-        //Verifica quando nao deve aplicar o novo mode (Free, no inicio ou fim da curva)
-        if (mode == CONTROLPOINTSMODE.FREE || modeIndex == 0 || modeIndex == modes.Length - 1)
+        //Verifica quando nao deve aplicar o novo mode (Free, nao esta em loop, no inicio ou fim da curva)
+        if (mode == CONTROLPOINTSMODE.FREE || !inLoop && (modeIndex == 0 || modeIndex == modes.Length - 1))
         { return; }
 
         // Seletor de indices onde o que escolhemos fica sempre fixo 
@@ -186,19 +226,35 @@ public class BezierSpline : MonoBehaviour
         {
             // O ponto anterior fica marcado como fixo
             fixedIndex = middleIndex - 1;
+            if (fixedIndex < 0)
+            {
+                fixedIndex = points.Length - 2;
+            }
             // E força o ponto a seguir 
             enforcedIndex = middleIndex + 1;
+            if (enforcedIndex >= points.Length)
+            {
+                enforcedIndex = 1;
+            }
         }
         else // Caso o ponto esteja à frente
         {
             // O ponto fixo é o proximo 
             fixedIndex = middleIndex + 1;
+            if (fixedIndex >= points.Length)
+            {
+                fixedIndex = 1;
+            }
             // E força-se o anterior
             enforcedIndex = middleIndex - 1;
+            if (enforcedIndex < 0)
+            {
+                enforcedIndex = points.Length - 2;
+            }
         }
         // Vamos buscar o ponto medio
         Vector3 middle = points[middleIndex];
-        
+
         // Calculamos o vector entre o fixo e o escolhido
         Vector3 enforcedTangent = middle - points[fixedIndex];
         if (mode == CONTROLPOINTSMODE.ALIGN)
@@ -209,21 +265,43 @@ public class BezierSpline : MonoBehaviour
         //No caso de ser um reflexo aplca-se o mesmo valor do ponto medio ao ponto vizinho nao escolhido
         points[enforcedIndex] = middle + enforcedTangent;
     }
-    
+
     //Move o pontos visinhos com o medio
-    private void MovePointsAlong(int index,  Vector3 pointValue)
+    private void MovePointsAlong(int index, Vector3 pointValue)
     {
         if (index % 3 == 0) //Se for um ponto na curva e nao de controlo
         {
             Vector3 delta = pointValue - points[index]; //Guarda-se o valor de movimento
-            if (index > 0) // Caso seja superior a zero move o que esta a seguir
+
+            //Verificação dos pontos a mover em loop
+            if (inLoop)
             {
-                points[index - 1] += delta;
+                if (index == 0)// Moviemnto do primeiro
+                {
+                    points[1] += delta;
+                    points[points.Length - 2] += delta;
+                    points[points.Length - 1] = pointValue;
+                }
+                else if (index == points.Length - 1) // Moviemnto do ultimo
+                {
+                    points[0] = pointValue;
+                    points[1] += delta;
+                    points[index - 1] += delta;
+                }
+                else //Qualquer outro ponto
+                {
+                    points[index - 1] += delta;
+                    points[index + 1] += delta;
+                }
             }
-            if (index + 1 < points.Length) // Caso seja inferioe ao maximo move o que esta a antes
-            {
-                points[index + 1] += delta;
-            }
+            //if (index > 0) // Caso seja superior a zero move o que esta a seguir
+            //{
+            //    points[index - 1] += delta;
+            //}
+            //if (index + 1 < points.Length) // Caso seja inferioe ao maximo move o que esta a antes
+            //{
+            //    points[index + 1] += delta;
+            //}
         }
     }
 

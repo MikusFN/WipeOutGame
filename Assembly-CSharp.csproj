@@ -71,10 +71,11 @@
     <Compile Include="Assets\Scripts\Mesh Editor\VoxelData.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\Helper\Bezier.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\Helper\Points Mode.cs" />
+    <Compile Include="Assets\Scripts\Spline Editor\ItemsInSpline.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\BezierCurve.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\BezierSpline.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\Line.cs" />
-    <Compile Include="Assets\Scripts\Spline Editor\SphereMove.cs" />
+    <Compile Include="Assets\Scripts\Spline Editor\MonoBehavior\SplineWalker.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\CameraController.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\CarController.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\LoadXMLData.cs" />
