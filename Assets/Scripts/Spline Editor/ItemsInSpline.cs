@@ -20,7 +20,7 @@ public class ItemsInSpline : MonoBehaviour
         }
         //Percentagem para cada item
         float percentItem = 1f / (frequenciaDeItem * items.Length);
-        
+
         for (int numeroItem = 0, f = 0; f < frequenciaDeItem; f++)
         {
             for (int i = 0; i < items.Length; i++, numeroItem++)
@@ -38,9 +38,42 @@ public class ItemsInSpline : MonoBehaviour
             }
         }
 
+        //CriacaoItemsSpline(ref items);
     }
 
 
+    public void InstantiationObject(int i, int numeroItem, float percentItem, ref Transform[] items)
+    {
+        //Cada item é colocado na posição com o item do numero de item e é obtido na spline pela percentagem correspondente a cada item 
+        Transform item = Instantiate(items[i]) as Transform;
+        Vector3 position = spline.GetPointInSpline(numeroItem * percentItem);
+        item.transform.localPosition = position;
+        if (lookForward)
+        {
+            //Colocar os objectos na direção da spline
+            item.transform.LookAt(position + spline.GetDirection(numeroItem * percentItem));
+        }
+        item.transform.parent = transform;
+    }
+
+    public void CriacaoItemsSpline(ref Transform[] items)
+    {
+        //Restrições ao items
+        if (frequenciaDeItem <= 0 || items == null || items.Length == 0)
+        {
+            return;
+        }
+        //Percentagem para cada item
+        float percentItem = 1f / (frequenciaDeItem * items.Length);
+
+        for (int numeroItem = 0, f = 0; f < frequenciaDeItem; f++)
+        {
+            for (int i = 0; i < items.Length; i++, numeroItem++)
+            {
+                InstantiationObject(i, numeroItem, percentItem, ref items);
+            }
+        }
+    }
 
     //if (spline.InLoop || stepSize == 1)
     //{

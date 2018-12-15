@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\Mesh Editor\LookAtController.cs" />
     <Compile Include="Assets\Scripts\Mesh Editor\VerticeController.cs" />
     <Compile Include="Assets\Scripts\Mesh Editor\VoxelData.cs" />
+    <Compile Include="Assets\Scripts\Procedural Mesh\GridMesh.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\Helper\Bezier.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\Helper\Points Mode.cs" />
     <Compile Include="Assets\Scripts\Spline Editor\ItemsInSpline.cs" />

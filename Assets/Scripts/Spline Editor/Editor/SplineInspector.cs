@@ -64,6 +64,12 @@ public class SplineInspector : Editor
             spline.AddCurve();
             EditorUtility.SetDirty(spline);//Helps in the undo process
         }
+        if (GUILayout.Button("Update Objects"))//se butao no inspector  for pressionado chama o metodo para Update dos objectos
+        {
+            Undo.RecordObject(spline, "Update");
+            spline.UpdatePointsNaSpline();
+            EditorUtility.SetDirty(spline);//Helps in the undo process
+        }
     }
 
 
@@ -212,6 +218,20 @@ public class SplineInspector : Editor
             point = spline.GetPointInSpline(i / (float)steps);
             //Direcções que parte do ponto que acaba a linha + a primeira derivada que da a velocidade a cada ponto
             Handles.DrawLine(point, point + spline.GetVelocity(i / (float)steps) * directionScale);
+        }
+    }
+
+    public void OnDrawGizmos()
+    {
+
+        if (spline == null)
+            return;
+
+        Gizmos.color = Color.black;
+
+        for (int i = 0; i < spline.PointsCount; i++)
+        {
+            Gizmos.DrawSphere(spline.GetPointInSpline(i/spline.PointsCount), 0.1f);
         }
     }
     #endregion Methods

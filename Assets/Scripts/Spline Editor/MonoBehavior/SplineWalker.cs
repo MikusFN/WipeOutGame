@@ -24,7 +24,7 @@ public class SplineWalker : MonoBehaviour
     private void Start()
     {
         lastPosition = transform.position;
-        transform.position = spline.GetPointCubicInCurve(0);
+        transform.position = spline.GetPointInSpline(0);
         lookAhead = true;
     }
     private void Update()

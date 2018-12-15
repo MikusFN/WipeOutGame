@@ -66,6 +66,14 @@ public class BezierSpline : MonoBehaviour
         EnforceMode(index);
     }
 
+    public void UpdatePointsNaSpline()
+    {
+            foreach (Transform item in GetComponentInChildren<ItemsInSpline>().items)
+            {
+                DestroyImmediate(item.gameObject, true);
+            }
+    }
+
     #endregion Properties
 
     #region Constructor
@@ -156,10 +164,10 @@ public class BezierSpline : MonoBehaviour
         return transform.TransformPoint(Bezier.GetPoint(points[i], points[i + 1], points[i + 2], points[i + 3], t));
     }
 
-    public Vector3 GetPointCubicInCurve(float t)
-    {
-        return transform.TransformPoint(Bezier.GetPoint(points[0], points[1], points[2], points[3], t));
-    }
+    //public Vector3 GetPointCubicInCurve(float t)
+    //{
+    //    return transform.TransformPoint(Bezier.GetPoint(points[0], points[1], points[2], points[3], t));
+    //}
 
     public Vector3 GetVelocity(float t)
     {
@@ -199,10 +207,10 @@ public class BezierSpline : MonoBehaviour
         return GetVelocity(t).normalized;
     }
 
-    public Vector3 GetDirectionCubic(float t)
-    {
-        return GetVelocityCubic(t).normalized;
-    }
+    //public Vector3 GetDirectionCubic(float t)
+    //{
+    //    return GetVelocityCubic(t).normalized;
+    //}
 
     //Aplica o mode correspondente ao index que recebe
     private void EnforceMode(int index)
@@ -304,6 +312,6 @@ public class BezierSpline : MonoBehaviour
             //}
         }
     }
-
+    
     #endregion Methods
 }

@@ -17,7 +17,7 @@ public class EditableMesh : MonoBehaviour
     private List<Vector3> verticesList;
 
     public int gridSizeX = 1, gridSizeY = 1;
-    public float cellSize = 1, heightValue = 0.1f, cubeX=1, cubeY=1, cubeZ=1;
+    public float cellSize = 1, heightValue = 0.1f, cubeX = 1, cubeY = 1, cubeZ = 1;
     public Vector3 gridOffSet;
     float yValue = 0;
 
@@ -30,6 +30,7 @@ public class EditableMesh : MonoBehaviour
 
     void Start()
     {
+        MeshStartData();
         MeshMakeData();
 
         //GenerateVoxelMesh(new VoxelData());
@@ -49,7 +50,7 @@ public class EditableMesh : MonoBehaviour
                 if (voxelData.GetCell(j, i) == 0)
                     continue;
                 else
-                MakeCubeVoxel((Direction)i, vertexOffSet, new Vector3(j * vertexOffSet, cubeY * vertexOffSet, i * vertexOffSet), j, i, voxelData);
+                    MakeCubeVoxel((Direction)i, vertexOffSet, new Vector3(j * vertexOffSet, cubeY * vertexOffSet, i * vertexOffSet), j, i, voxelData);
 
             }
         }
@@ -63,20 +64,20 @@ public class EditableMesh : MonoBehaviour
 
         for (int i = 0; i < 6; i++)
         {
-            if(voxelData.GetNeightbor(x, z, dirVoxel) ==0)
-            MakeFace((Direction)i, vertexOffSetVoxel, voxelPos);
+            if (voxelData.GetNeightbor(x, z, dirVoxel) == 0)
+                MakeFace((Direction)i, vertexOffSetVoxel, voxelPos);
         }
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        MeshMakeData();
-        MeshStartData();
-        
-        //MeshStartDataToArray();
-        //MeshUpdateData();
-    }
+    //void Update()
+    //{
+    //    MeshMakeData();
+    //    MeshStartData();
+
+    //    //MeshStartDataToArray();
+    //    //MeshUpdateData();
+    //}
 
 
     private void MeshMakeData()
@@ -94,7 +95,7 @@ public class EditableMesh : MonoBehaviour
 
         for (int i = 0; i < 6; i++)
         {
-            MakeFace((Direction)i, vertexOffSet, new Vector3(cubeX*vertexOffSet, cubeY * vertexOffSet, cubeZ * vertexOffSet));
+            MakeFace((Direction)i, vertexOffSet, new Vector3(cubeX * vertexOffSet, cubeY * vertexOffSet, cubeZ * vertexOffSet));
         }
     }
 
@@ -188,8 +189,8 @@ public class EditableMesh : MonoBehaviour
                 //yValue = Mathf.Exp(j * 0.1f);
 
                 //Populate the vertices & triangles arrays
-                vertices[l] = new Vector3((i * cellSize) - vertexOffSet, yValue, (j * cellSize) - vertexOffSet);
-
+                vertices[l] = new Vector3((i * cellSize) - vertexOffSet, yValue, (cellSize) - vertexOffSet);
+                Instantiate<GameObject>(GameObject.CreatePrimitive(PrimitiveType.Plane), vertices[l], Quaternion.identity);
                 l++;
             }
         }
@@ -198,16 +199,16 @@ public class EditableMesh : MonoBehaviour
 
         for (int i = 0; i < gridSizeX; i++)
         {
-            for (int j = 0; j < gridSizeY; j++)
-            {
-                //Set Triangles Order
-                triangles[m + 0] = l;
-                triangles[m + 1] = triangles[m + 4] = l + 1;
-                triangles[m + 2] = triangles[m + 3] = l + (gridSizeX )+1;
-                triangles[m + 5] = l + (gridSizeY + 1) + 1;
-                l ++; 
-                m += 6;
-            }
+            //for (int j = 0; j < gridSizeY; j++)
+            //{
+            //Set Triangles Order
+            triangles[m + 0] = l;
+            triangles[m + 1] = triangles[m + 4] = l + 1;
+            triangles[m + 2] = triangles[m + 3] = l + (gridSizeX) + 1;
+            triangles[m + 5] = l + (gridSizeY + 1) + 1;
+            l++;
+            m += 6;
+            // }
             l++;
         }
         foreach (int item in triangles)

@@ -16,7 +16,7 @@ public class LookAtController : MonoBehaviour
     private Vector3 lastPosition;
 
     public int backSpace = -1;
-    public float height=1;
+    public float height = 1;
 
     void Start()
     {
@@ -26,15 +26,17 @@ public class LookAtController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (!isLocked)
         {
-            rotationX += Input.GetAxis("Mouse X") * cameraSensitivity * Time.deltaTime;
-            rotationY += Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
-            rotationY = Mathf.Clamp(rotationY, -90, 90);
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                rotationX += Input.GetAxis("Mouse X") * cameraSensitivity * Time.deltaTime;
+                rotationY += Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
+                rotationY = Mathf.Clamp(rotationY, -90, 90);
+            }
+            transform.localRotation = Quaternion.AngleAxis(rotationX, Vector3.up);
+            transform.localRotation *= Quaternion.AngleAxis(rotationY, Vector3.left);
         }
-        transform.localRotation = Quaternion.AngleAxis(rotationX, Vector3.up);
-        transform.localRotation *= Quaternion.AngleAxis(rotationY, Vector3.left);
-
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             transform.position += transform.forward * (normalMoveSpeed * fastMoveFactor) * Input.GetAxis("Vertical") * Time.deltaTime;
@@ -59,15 +61,16 @@ public class LookAtController : MonoBehaviour
         {
             Cursor.lockState = (Cursor.lockState == CursorLockMode.Confined) ? CursorLockMode.Confined : CursorLockMode.Locked;
         }
+
         if (Input.GetKeyDown(KeyCode.L))
             isLocked = !isLocked;
 
         if (isLocked && target)
         {
-            transform.position = Vector3.Lerp(target.position, lastPosition, 0.90f) ;
+            transform.position = Vector3.Lerp(target.position - transform.forward * backSpace, transform.position, 0.9f);
             transform.LookAt(target);
         }
-        lastPosition = transform.position;
+        lastPosition = target.position;
     }
 }
 
