@@ -67,10 +67,10 @@ public class LookAtController : MonoBehaviour
 
         if (isLocked && target)
         {
-            transform.position = Vector3.Lerp(target.position - transform.forward * backSpace, transform.position, 0.9f);
+            transform.position = target.position + target.up*height+target.forward*backSpace;//Vector3.Lerp(target.position - transform.forward * backSpace, transform.position, 0.9f);
             transform.LookAt(target);
         }
-        lastPosition = target.position;
+        //lastPosition = target.position;
     }
 }
 

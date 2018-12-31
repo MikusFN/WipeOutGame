@@ -61,6 +61,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CarController2.cs" />
+    <Compile Include="Assets\RailMesh.cs" />
     <Compile Include="Assets\Scripts\Bezier Curve Editor\Path.cs" />
     <Compile Include="Assets\Scripts\Bezier Curve Editor\PathCreator.cs" />
     <Compile Include="Assets\Scripts\Bezier Curve Editor\PathEditor.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Assets\Scripts\WipeOutPrototype\TileSpawn.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\XMLQuadReaderUnity.cs" />
     <Compile Include="Assets\Scripts\WipeOutPrototype\XMLReaderMain.cs" />
+    <Compile Include="Assets\UserInputManager.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/Ferna/Desktop/EDJD/3º Ano/PAI/WipeOutClone/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

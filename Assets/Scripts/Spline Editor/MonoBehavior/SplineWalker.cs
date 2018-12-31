@@ -6,13 +6,16 @@ public class SplineWalker : MonoBehaviour
 {
 
     public BezierSpline spline;
-    public float duration;
+    [SerializeField]
+    public float duration, maxDuration, minDuration;
+    [SerializeField]
+    int visionDistance;
     private float progress;
     private Vector3 positionSpline;
-    public bool lookAhead;
+    public bool lookAhead, goingForward = true;
     public SplineWalkerMode mode;
-    public GameObject prefab;
     Vector3 lastPosition;
+    public GameObject player;
     public enum SplineWalkerMode
     {
         //Modos de circulação
@@ -23,20 +26,60 @@ public class SplineWalker : MonoBehaviour
 
     private void Start()
     {
+        transform.position = player.transform.position + transform.forward * 5;
         lastPosition = transform.position;
-        transform.position = spline.GetPointInSpline(0);
         lookAhead = true;
     }
-    private void Update()
+    private void LateUpdate()
     {
-        LineWalker(ref progress, duration,spline, lastPosition);
+
+        //if ((player.transform.position - transform.position).magnitude <20 )
+        //{
+        //    duration -= (player.transform.position - transform.position).magnitude * 0.1f;
+        //}
+        //if ((duration < 80|| (player.transform.position - transform.position).magnitude >40))
+        //    duration += (player.transform.position - transform.position).magnitude * 0.1f;
+
+        Debug.Log(Vector3.Dot((player.transform.position - transform.position), transform.forward));
+
+        //Debug.Log(duration);
+        if ((player.transform.position - transform.position).magnitude > visionDistance)
+        {
+            if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
+            {
+                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
+
+            }
+            else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
+            {
+                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
+            }
+        }
+        else
+        {
+            if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
+            {
+                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1/ (player.transform.position - transform.position).magnitude);
+
+            }
+            else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
+            {
+                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1 / (player.transform.position - transform.position).magnitude);
+            }
+        }
+
+        LineWalker(ref progress, duration, spline, lastPosition);
         lastPosition = transform.position;
     }
 
     //Coloca esta transform local position na spline que vem da spline
     private void LineWalker(ref float p, float walkTime, BezierSpline spline, Vector3 lastPosition)
     {
-        if (lookAhead)
+        if (goingForward)
         {
             //A walk é ao longo do tempo
             p += Time.deltaTime / walkTime;
@@ -54,7 +97,7 @@ public class SplineWalker : MonoBehaviour
                 else
                 {
                     p = 2f - p;
-                    lookAhead = false;
+                    goingForward = false;
                 }
             }
         }
@@ -64,18 +107,17 @@ public class SplineWalker : MonoBehaviour
             if (p < 0f)
             {
                 p = -p;
-                lookAhead = true;
+                goingForward = true;
             }
         }
 
         //Atribuição da posiçao
         positionSpline = spline.GetPointInSpline(p);
-        transform.position = Vector3.Lerp( positionSpline, lastPosition, 0.9f);
+        transform.position = Vector3.Lerp(positionSpline, lastPosition, 0.9f);
 
         if (lookAhead)
-        {
             transform.LookAt(positionSpline + spline.GetDirection(p));
-        }
+
         //if (p != 1)
         //    Instantiate(prefab, spline.GetPointInSpline(p), Quaternion.identity); //= spline.GetPointInSpline(p);
         //Rigidbody rb = GetComponent<Rigidbody>();

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ThrusterController : MonoBehaviour
 {
-    public float strenght, distanceMax;
+    public float strenght, distanceMax, maxStreghtStart, maxStrenght;
     public Transform[] thrusters;
+    public Transform[] colliders;
 
     public new Rigidbody rigidbody;
 
@@ -17,22 +18,23 @@ public class ThrusterController : MonoBehaviour
 
         RaycastHit hit;
 
-        foreach (Transform thruster in thrusters)
+        for (int i =0;i< thrusters.Length;i++)
         {
             downForce = Vector3.zero;
             distancePercent = 0;
 
-            if (Physics.Raycast(thruster.position, -thruster.up, out hit, distanceMax))
+            if (Physics.Raycast(thrusters[i].position, -thrusters[i].up, out hit, distanceMax))
             {
                 distancePercent = (1 - (hit.distance / distanceMax))*2;
 
-                downForce = thruster.up * strenght *distancePercent;
-
+                downForce = thrusters[i].up * strenght *distancePercent;
+                colliders[i].position = hit.collider.ClosestPoint(thrusters[i].position);
+                Debug.Log(hit.collider.tag);
                 if (rigidbody)
                 {
                     downForce = downForce * Time.fixedDeltaTime * rigidbody.mass;
-                    Debug.DrawRay(thruster.position, -downForce.normalized);
-                    rigidbody.AddForceAtPosition(downForce, thruster.position);
+                    Debug.DrawRay(thrusters[i].position, -downForce.normalized);
+                    rigidbody.AddForceAtPosition(downForce, thrusters[i].position);
                 }
 
             }

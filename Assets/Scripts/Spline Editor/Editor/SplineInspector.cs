@@ -221,19 +221,20 @@ public class SplineInspector : Editor
         }
     }
 
-    public void OnDrawGizmos()
-    {
+    //public void OnDrawGizmos()
+    //{
 
-        if (spline == null)
-            return;
+    //    if (spline == null)
+    //        return;
 
-        Gizmos.color = Color.black;
+    //    Gizmos.color = Color.black;
 
-        for (int i = 0; i < spline.PointsCount; i++)
-        {
-            Gizmos.DrawSphere(spline.GetPointInSpline(i/spline.PointsCount), 0.1f);
-        }
-    }
+    //    for (int i = 0; i < spline.PointsCount; i++)
+    //    {
+    //        Gizmos.DrawSphere(spline.GetPointInSpline(i/spline.PointsCount), 0.1f);
+    //    }
+        
+    //}
     #endregion Methods
 
 }

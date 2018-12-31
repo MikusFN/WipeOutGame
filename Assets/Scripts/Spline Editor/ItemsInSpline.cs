@@ -8,11 +8,15 @@ public class ItemsInSpline : MonoBehaviour
 
 
     public BezierSpline spline;
-    public int frequenciaDeItem;
+    public int frequenciaDeItem, width, height;
     public bool lookForward;
     public Transform[] items;
-    private void Awake()
+    List<Vector3> pointsSpline = new List<Vector3>();
+
+
+    public void Start()
     {
+        //spline.GiveOnlyPoints();
         //Restrições ao items
         if (frequenciaDeItem <= 0 || items == null || items.Length == 0)
         {
@@ -26,19 +30,37 @@ public class ItemsInSpline : MonoBehaviour
             for (int i = 0; i < items.Length; i++, numeroItem++)
             {
                 //Cada item é colocado na posição com o item do numero de item e é obtido na spline pela percentagem correspondente a cada item 
-                Transform item = Instantiate(items[i]) as Transform;
+                //Transform item = Instantiate(items[i]) as Transform;
                 Vector3 position = spline.GetPointInSpline(numeroItem * percentItem);
-                item.transform.localPosition = position;
-                if (lookForward)
-                {
-                    //Colocar os objectos na direção da spline
-                    item.transform.LookAt(position + spline.GetDirection(numeroItem * percentItem));
-                }
-                item.transform.parent = transform;
+                //item.transform.localPosition = position;
+                //if (lookForward)
+                //{
+                //    //Colocar os objectos na direção da spline
+                //    item.transform.LookAt(position + spline.GetDirection(numeroItem * percentItem));
+                //}
+                pointsSpline.Add(position);
+                //Debug.Log(position);
+                //item.transform.parent = transform;
             }
         }
+        spline.width = width;
+        spline.height = height;
+        spline.DefineMeshPoints(pointsSpline);
 
+        //foreach (Vector3 point in spline.PointsMesh)
+        //{
+        //    if (prefab)
+        //        Instantiate(prefab, point, Quaternion.identity);
+        //}
         //CriacaoItemsSpline(ref items);
+    }
+    public void Update()
+    {
+        //for (int i = 0; i < spline.PointsMesh.Count; i++)
+        //{
+        //    if (i > 0)
+        //        Debug.DrawLine(spline.GetterPointMesh(i), spline.GetterPointMesh(i - 1), Color.green);
+        //}
     }
 
 
