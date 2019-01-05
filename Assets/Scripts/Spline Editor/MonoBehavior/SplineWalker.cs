@@ -10,7 +10,7 @@ public class SplineWalker : MonoBehaviour
     public float duration, maxDuration, minDuration;
     [SerializeField]
     int visionDistance;
-    private float progress;
+    public float progress;
     private Vector3 positionSpline;
     public bool lookAhead, goingForward = true;
     public SplineWalkerMode mode;
@@ -40,39 +40,43 @@ public class SplineWalker : MonoBehaviour
         //if ((duration < 80|| (player.transform.position - transform.position).magnitude >40))
         //    duration += (player.transform.position - transform.position).magnitude * 0.1f;
 
-        Debug.Log(Vector3.Dot((player.transform.position - transform.position), transform.forward));
+        //Debug.Log(Vector3.Dot((player.transform.position - transform.position), transform.forward));
 
         //Debug.Log(duration);
-        if ((player.transform.position - transform.position).magnitude > visionDistance)
-        {
-            if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
-            {
-                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
-                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
+        //if ((player.transform.position - transform.position).magnitude > visionDistance)
+        //{
+        //    if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
+        //    {
+        //        if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+        //            duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
 
-            }
-            else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
-            {
-                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
-                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
-            }
-        }
-        else
-        {
-            if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
-            {
-                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
-                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1/ (player.transform.position - transform.position).magnitude);
+        //    }
+        //    else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
+        //    {
+        //        if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+        //            duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward);
+        //    }
+        //}
+        //else
+        //{
+        //    if (Vector3.Dot((player.transform.position - transform.position), transform.forward) < 0f)
+        //    {
+        //        if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+        //            duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1/ (player.transform.position - transform.position).magnitude);
 
-            }
-            else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
-            {
-                if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
-                    duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1 / (player.transform.position - transform.position).magnitude);
-            }
-        }
+        //    }
+        //    else if (Vector3.Dot((player.transform.position - transform.position), transform.forward) > 0f)
+        //    {
+        //        if (duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) > minDuration && duration - Vector3.Dot((player.transform.position - transform.position), transform.forward) < maxDuration)
+        //            duration -= Vector3.Dot((player.transform.position - transform.position), transform.forward)*(1 / (player.transform.position - transform.position).magnitude);
+        //    }
+        //}
+        positionSpline = spline.GetPointInSpline(spline.t+0.005f);
+        transform.position = positionSpline;//Vector3.Lerp(positionSpline, lastPosition, 0.5f);
 
-        LineWalker(ref progress, duration, spline, lastPosition);
+        if (lookAhead)
+            transform.LookAt(positionSpline + spline.GetDirection(spline.t + 0.005f));
+        //LineWalker(ref progress, duration, spline, lastPosition);
         lastPosition = transform.position;
     }
 

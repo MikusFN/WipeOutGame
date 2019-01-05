@@ -10,13 +10,17 @@ public class BezierSpline : MonoBehaviour
     [SerializeField]// So unity can save our points
     private Vector3[] points;
     [SerializeField]// So unity can save our points
-    private List<Vector3> pointsMesh, pointsRightRail, pointsLeftRail;
+    private List<Vector3> pointsMesh, pointsMeshLine, pointsRightRail, pointsLeftRail;
     [SerializeField]
     private CONTROLPOINTSMODE[] modes;
     [SerializeField]
     private bool inLoop;
     private int curveCount;
     public int width, height;
+    public float lineWidth;
+    [HideInInspector]
+    public float t = 0;
+
     #endregion Fields
 
     #region Properties
@@ -74,6 +78,15 @@ public class BezierSpline : MonoBehaviour
         }
     }
 
+    public List<Vector3> PointsMeshLine
+    {
+        get
+        {
+            return pointsMeshLine;
+        }
+
+    }
+
     public CONTROLPOINTSMODE GetControlPointMode(int index) { return modes[(index + 1) / 3]; }
     public void SetControlPointMode(int index, CONTROLPOINTSMODE mode)
     {
@@ -96,13 +109,13 @@ public class BezierSpline : MonoBehaviour
         EnforceMode(index);
     }
 
-    public void UpdatePointsNaSpline()
-    {
-        foreach (Transform item in GetComponentInChildren<ItemsInSpline>().items)
-        {
-            DestroyImmediate(item.gameObject, true);
-        }
-    }
+    //public void UpdatePointsNaSpline()
+    //{
+    //    foreach (Transform item in GetComponentInChildren<ItemsInSpline>().items)
+    //    {
+    //        DestroyImmediate(item.gameObject, true);
+    //    }
+    //}
 
     #endregion Properties
 
@@ -251,6 +264,34 @@ public class BezierSpline : MonoBehaviour
         return GetVelocity(t).normalized;
     }
 
+    public Vector3 GetDirection(Vector3 myPosition)
+    {
+         t = 0;
+        Vector3 positionMesh = Vector3.zero;
+        int numeroItem = 0, f=0;
+        for (int i = 0; i < pointsMesh.Count; i++)
+        {
+
+            if ((myPosition.x-pointsMesh[i].x)<0.01f)
+            {
+                positionMesh = pointsMesh[i];
+                break;
+            }
+                
+        }
+        for ( numeroItem = 0, f = 0; f < GetComponentInChildren<ItemsInSpline>().frequenciaDeItem; f++, numeroItem++)
+        {
+
+            if (positionMesh.x- GetPointInSpline(numeroItem * GetComponentInChildren<ItemsInSpline>().percentItem).x<0.01f)
+            {
+                t = numeroItem * GetComponentInChildren<ItemsInSpline>().percentItem;
+                break;
+            }
+        }
+
+        return GetVelocity(t).normalized;
+    }
+
     //public Vector3 GetDirectionCubic(float t)
     //{
     //    return GetVelocityCubic(t).normalized;
@@ -371,7 +412,7 @@ public class BezierSpline : MonoBehaviour
     public void DefineMeshPoints(List<Vector3> pointsInCurve)
     {
         //Vector3 right = points[0] + Vector3.right, left = points[0] + Vector3.left, up = points[0] + Vector3.up;
-        Vector3 foward;
+        Vector3 foward, lastFoward =Vector3.zero;
         List<Vector3> up = new List<Vector3>();
         for (int i = 0; i < pointsInCurve.Count; i++)
         {
@@ -386,13 +427,14 @@ public class BezierSpline : MonoBehaviour
                 foward += pointsInCurve[(i + 1) % pointsInCurve.Count] - pointsInCurve[i];
             }
             foward.Normalize();
-            Vector3 left = new Vector3(-foward.z, foward.y, foward.x);
+            Vector3 left = new Vector3(-foward.z,0, foward.x);
             up.Add(Vector3.Cross(foward, left));
             up.Add(Vector3.Cross(foward, -left));
             pointsMesh.Add(pointsInCurve[i] + left * width * 0.5f);
             pointsMesh.Add(pointsInCurve[i] - left * width * 0.5f);
-
-
+            PointsMeshLine.Add(pointsInCurve[i] + left * lineWidth * 0.5f);
+            PointsMeshLine.Add(pointsInCurve[i] - left * lineWidth * 0.5f);
+            lastFoward = foward;
             //right = new Vector3((points[i] - points[i + 3]).z, (points[i] - points[i + 3]).y,(points[i]-points[i+3]).x);
             //pointsMesh.Add(right);
             //left = Vector3.Cross(points[i + 3] - points[i],up).normalized;
@@ -427,7 +469,6 @@ public class BezierSpline : MonoBehaviour
         //pointsMesh.Add(pointsMesh[0]);
 
     }
-
 }
 #endregion Methods
 

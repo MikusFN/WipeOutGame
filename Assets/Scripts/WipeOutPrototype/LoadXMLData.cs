@@ -39,17 +39,17 @@ namespace Assets.GeneralScripts
         private static string PATH = "C:/Sensing Future Technologies/wigateway.xml";
         //private static string PATH = "C:/Users/tayna/Desktop/wigateway.xml";
 
-        private float direita, esquerda, frente, tras, x = 0.0f, y = 0.0f;
+        private float direita, esquerda, frente, tras, x = 0.0f, y = 0.0f, somaValores;
         public float _fe, _fd, _te, _td, _weight, amp;
         private Vector2 _virtualDirection = Vector2.zero;
-                
+
         private XmlDocument _xmlDoc;
         //private StreamReader _reader;
 
         //Data Writer
         //private string _writerPath = "Assets/Resources/SessionStats.txt";
         //StreamWriter dataWriter;
-        
+
         EventWaitHandle _waitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, "SHARED_BY_ALL_PROCESSES");
 
         private void Awake()
@@ -93,10 +93,10 @@ namespace Assets.GeneralScripts
             _waitHandle.WaitOne();
             //read xml
             _xmlDoc.Load(PATH);
-            Debug.Log("XML DATA LOADED");
+            //Debug.Log("XML DATA LOADED");
 
             XmlNodeList xmlNodeList = _xmlDoc.GetElementsByTagName("WiGateWay");
-                        
+
             if (xmlNodeList == null)
             {
                 Debug.Log("xmlNodeList is null!!");
@@ -104,22 +104,22 @@ namespace Assets.GeneralScripts
 
             foreach (XmlNode node in xmlNodeList)
             {
-                Debug.Log("xmlNodeList NOT null!!");
-                Debug.Log("node.name -> " + node.Name);
+                //Debug.Log("xmlNodeList NOT null!!");
+                //Debug.Log("node.name -> " + node.Name);
                 XmlNodeList childNodes = node.ChildNodes;
 
                 _weight = float.Parse(_xmlDoc.SelectSingleNode("/ListWiGateWay/@Peso").Value);
-                
+
                 foreach (XmlNode child in childNodes)
                 {
-                    Debug.Log("child.name -> " + child.Name);
+                    //Debug.Log("child.name -> " + child.Name);
 
                     switch (child.Name)
                     {
                         case "FE":
 
                             _fe = float.Parse(child.InnerText);
-                            Debug.Log("FE -> " + _fe + " x = " + _virtualDirection.x);
+                            //Debug.Log("FE -> " + _fe + " x = " + _virtualDirection.x);
                             //dataWriter.WriteLine("FE");
 
                             break;
@@ -127,37 +127,44 @@ namespace Assets.GeneralScripts
                         case "FD":
 
                             _fd = float.Parse(child.InnerText);
-                            Debug.Log("FD -> " + _fd + " x = " + _virtualDirection.x);
+                            //Debug.Log("FD -> " + _fd + " x = " + _virtualDirection.x);
                             //dataWriter.WriteLine("FD");
                             break;
 
                         case "TE":
 
                             _te = float.Parse(child.InnerText);
-                            Debug.Log("TE -> " + _te + " x = " + _virtualDirection.x);
+                            //Debug.Log("TE -> " + _te + " x = " + _virtualDirection.x);
                             //dataWriter.WriteLine("TE");
                             break;
 
                         case "TD":
 
                             _td = float.Parse(child.InnerText);
-                            Debug.Log("TD -> " + _td + " x = " + _virtualDirection.x);
+                            //Debug.Log("TD -> " + _td + " x = " + _virtualDirection.x);
                             //dataWriter.WriteLine("TD");
                             break;
                     }
-                 
+
                 }
-             //   dataWriter.Close();
+                //   dataWriter.Close();
 
-                direita = (_td + _fd);
-                esquerda = (_fe + _te);
-                frente = (_fd + _fe);
-                tras = (_td + _te);
+                Direita = Mathf.Clamp(_td + _fd, 0.0f, 1.0f);
+                Esquerda = Mathf.Clamp(_fe + _te, 0.0f, 1.0f);
+                Frente = Mathf.Clamp(_fd + _fe, 0.0f, 1.0f);
+                Tras = Mathf.Clamp(_td + _te, 0.0f, 1.0f);
 
-                amp = Mathf.Sqrt(Mathf.Pow(direita - esquerda, 2) + Mathf.Pow(frente - tras, 2));
+                somaValores = Direita + Esquerda + Frente + Tras;
+                Debug.Log("Direita -> " + Direita);
+                Debug.Log("Esquerda -> " + Esquerda);
+                Debug.Log("Frente -> " + Frente);
+                Debug.Log("Tras -> " + Tras);
+
+
+                amp = Mathf.Sqrt(Mathf.Pow(Direita - Esquerda, 2) + Mathf.Pow(Frente - Tras, 2));
                 //Debug.Log("amp: " + amp);
-                x = pesoValor * x + (1 - pesoValor) * (direita - esquerda);
-                y = pesoValor * y + (1 - pesoValor) * (frente - tras);
+                x = pesoValor * x + (1 - pesoValor) * (Direita - Esquerda);
+                y = pesoValor * y + (1 - pesoValor) * (Frente - Tras);
 
                 if (amp < 25)
                 {
@@ -166,34 +173,33 @@ namespace Assets.GeneralScripts
                 }
                 else if (amp < 75)
                 {
-                    Debug.Log("entrou" + amp);
-                    x = 0.1f * (pesoValor * x + (1 - pesoValor) * (direita - esquerda));
-                    y = 0.1f * (pesoValor * y + (1 - pesoValor) * (frente - tras));
+                    //Debug.Log("entrou" + amp);
+                    x = 0.1f * (pesoValor * x + (1 - pesoValor) * (Direita - Esquerda));
+                    y = 0.1f * (pesoValor * y + (1 - pesoValor) * (Frente - Tras));
                 }
                 else if (amp < 100)
                 {
-                    Debug.Log("entrou" + amp);
-                    x = (pesoValor * x + (1 - pesoValor) * (direita - esquerda));
-                    y = (pesoValor * y + (1 - pesoValor) * (frente - tras));
+                    //Debug.Log("entrou" + amp);
+                    x = (pesoValor * x + (1 - pesoValor) * (Direita - Esquerda));
+                    y = (pesoValor * y + (1 - pesoValor) * (Frente - Tras));
                 }
                 else if (amp < 125)
                 {
-                    Debug.Log("entrou" + amp);
-                    x = 0.1f * (pesoValor * x + (1 - pesoValor) * (direita - esquerda));
-                    y = 0.1f * (pesoValor * y + (1 - pesoValor) * (frente - tras));
+                    //Debug.Log("entrou" + amp);
+                    x = 0.1f * (pesoValor * x + (1 - pesoValor) * (Direita - Esquerda));
+                    y = 0.1f * (pesoValor * y + (1 - pesoValor) * (Frente - Tras));
                 }
                 else if (amp < 150)
                 {
-                    Debug.Log("entrou" + amp);
-                    x = 0.001f * (0.1f * (pesoValor * x + (1 - pesoValor) * (direita - esquerda)));
-                    y = 0.001f * (0.1f * (pesoValor * y + (1 - pesoValor) * (frente - tras)));
+                    //Debug.Log("entrou" + amp);
+                    x = 0.001f * (0.1f * (pesoValor * x + (1 - pesoValor) * (Direita - Esquerda)));
+                    y = 0.001f * (0.1f * (pesoValor * y + (1 - pesoValor) * (Frente - Tras)));
                 }
 
 
                 _virtualDirection = new Vector2(x, y);
                 //_virtualDirection = new Vector2((_td + _fd) - (_fe + _te), 0.0f);
                 _waitHandle.Set();
-
             }
         }
 
@@ -210,5 +216,64 @@ namespace Assets.GeneralScripts
             get { return _weight; }
         }
 
+        public float SomaValores
+        {
+            get
+            {
+                return somaValores;
+            }
+        }
+
+        public float Direita
+        {
+            get
+            {
+                return direita;
+            }
+
+            set
+            {
+                direita = value;
+            }
+        }
+
+        public float Esquerda
+        {
+            get
+            {
+                return esquerda;
+            }
+
+            set
+            {
+                esquerda = value;
+            }
+        }
+
+        public float Frente
+        {
+            get
+            {
+                return frente;
+            }
+
+            set
+            {
+                frente = value;
+            }
+        }
+
+        public float Tras
+        {
+            get
+            {
+                return tras;
+            }
+
+            set
+            {
+                tras = value;
+            }
+        }
     }
 }

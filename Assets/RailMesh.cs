@@ -33,6 +33,11 @@ public class RailMesh : MonoBehaviour {
             {
                 GenerateMesh(spline.PointsLeftRail, spline.InLoop);
             }
+            else if (tag == "CorrectLine")
+            {
+                GenerateMesh(spline.PointsMeshLine, spline.InLoop);
+
+            }
             GetComponent<MeshCollider>().sharedMesh = mesh;
             addCollider = false;
         }
@@ -58,6 +63,8 @@ public class RailMesh : MonoBehaviour {
             mesh.name = "Procedural Right Rail";
         if (tag == "LeftRail")
             mesh.name = "Procedural Left Rail";
+        if (tag == "CorrectLine")
+            mesh.name = "Procedural Correct Line";
         Vector3[] vertices = new Vector3[splinePoints.Count * 2];
         Vector2[] uvs = new Vector2[vertices.Length];
         int[] triangulos = new int[(2 * (splinePoints.Count - 1) + ((isLooped) ? 2 : 0)) * 3];

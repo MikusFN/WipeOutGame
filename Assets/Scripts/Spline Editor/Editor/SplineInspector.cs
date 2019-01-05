@@ -67,7 +67,7 @@ public class SplineInspector : Editor
         if (GUILayout.Button("Update Objects"))//se butao no inspector  for pressionado chama o metodo para Update dos objectos
         {
             Undo.RecordObject(spline, "Update");
-            spline.UpdatePointsNaSpline();
+            //spline.UpdatePointsNaSpline();
             EditorUtility.SetDirty(spline);//Helps in the undo process
         }
     }

@@ -6,11 +6,12 @@ using UnityEngine;
 public class ItemsInSpline : MonoBehaviour
 {
 
-
+    [HideInInspector]
+    public float percentItem;
     public BezierSpline spline;
     public int frequenciaDeItem, width, height;
+    public float widthLine;
     public bool lookForward;
-    public Transform[] items;
     List<Vector3> pointsSpline = new List<Vector3>();
 
 
@@ -18,17 +19,16 @@ public class ItemsInSpline : MonoBehaviour
     {
         //spline.GiveOnlyPoints();
         //Restrições ao items
-        if (frequenciaDeItem <= 0 || items == null || items.Length == 0)
+        if (frequenciaDeItem <= 0)// || items == null || items.Length == 0)
         {
             return;
         }
         //Percentagem para cada item
-        float percentItem = 1f / (frequenciaDeItem * items.Length);
+        percentItem = 1f / (frequenciaDeItem); //* items.Length);
 
-        for (int numeroItem = 0, f = 0; f < frequenciaDeItem; f++)
+        for (int numeroItem = 0, f = 0; f < frequenciaDeItem; f++,numeroItem++)
         {
-            for (int i = 0; i < items.Length; i++, numeroItem++)
-            {
+            
                 //Cada item é colocado na posição com o item do numero de item e é obtido na spline pela percentagem correspondente a cada item 
                 //Transform item = Instantiate(items[i]) as Transform;
                 Vector3 position = spline.GetPointInSpline(numeroItem * percentItem);
@@ -41,9 +41,10 @@ public class ItemsInSpline : MonoBehaviour
                 pointsSpline.Add(position);
                 //Debug.Log(position);
                 //item.transform.parent = transform;
-            }
+            
         }
         spline.width = width;
+        spline.lineWidth = widthLine;
         spline.height = height;
         spline.DefineMeshPoints(pointsSpline);
 
